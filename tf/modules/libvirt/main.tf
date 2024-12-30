@@ -17,9 +17,8 @@ resource "libvirt_volume" "quarkdb_data" {
 }
 
 resource "libvirt_cloudinit_disk" "quarkdb" {
-  count = var.num_vms
-  name  = format("quarkdb-cloud-init-%d", count.index)
-  # user_data      = templatefile("${path.module}/cloud-init/user-data", { hostname = libvirt_domain.quarkdb[count.index].name, bootstrap_password = var.bootstrap_password })
+  count          = var.num_vms
+  name           = format("quarkdb-cloud-init-%d", count.index)
   user_data      = templatefile("${path.module}/cloud-init/user-data", { bootstrap_password = var.bootstrap_password })
   meta_data      = templatefile("${path.module}/cloud-init/meta-data", {})
   network_config = templatefile("${path.module}/cloud-init/network-config", {})
@@ -46,8 +45,8 @@ resource "libvirt_domain" "quarkdb" {
   cloudinit = libvirt_cloudinit_disk.quarkdb[count.index].id
 
   network_interface {
-    network_name = "default"
-    # hostname       = "quarkdb"
+    network_name   = "default"
+    hostname       = format("quarkdb-%d", count.index)
     wait_for_lease = true
   }
 

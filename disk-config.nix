@@ -4,7 +4,7 @@
 {
   disko.devices = {
     disk.system = {
-      device = lib.mkDefault "/dev/sda";
+      device = lib.mkDefault "/dev/vda";
       type = "disk";
       content = {
         type = "gpt";
@@ -37,7 +37,7 @@
     };
 
     disk.data = {
-      device = lib.mkDefault "/dev/sdb";
+      device = lib.mkDefault "/dev/vdb";
       type = "disk";
       content = {
         type = "gpt";

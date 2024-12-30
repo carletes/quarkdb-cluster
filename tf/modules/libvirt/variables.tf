@@ -25,7 +25,7 @@ variable "disk_size_system" {
 variable "memory" {
   type        = number
   description = "Memory size in MiB"
-  default     = 1024
+  default     = 2048
 }
 
 variable "num_vms" {

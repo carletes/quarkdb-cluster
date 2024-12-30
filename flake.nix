@@ -17,23 +17,26 @@
   inputs.quarkdb-nix.inputs.flake-utils.follows = "flake-utils";
 
   outputs = { nixpkgs, disko, flake-utils, nixos-anywhere, quarkdb-nix, ... }:
-    (
+    let
+      overlays = [ quarkdb-nix.overlays.default ];
+    in
+    {
+      nixosConfigurations.quarkdb-0 = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          { nixpkgs.overlays = overlays; }
+          disko.nixosModules.disko
+          ./configuration.nix
+        ];
+      };
+    } // (
       flake-utils.lib.eachDefaultSystem (system:
         let
           pkgs = import nixpkgs {
             inherit system;
-            overlays = [ quarkdb-nix.overlays.default ];
           };
         in
         {
-          nixosConfigurations.quarkdb-0 = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
-            modules = [
-              disko.nixosModules.disko
-              ./configuration.nix
-            ];
-          };
-
           devShells.default = pkgs.mkShell {
             buildInputs = with pkgs; [
               cdrtools
@@ -46,5 +49,6 @@
               export LIBVIRT_DEFAULT_URI="qemu:///system"
             '';
           };
-        }));
+        })
+    );
 }

@@ -19,16 +19,22 @@
   outputs = { nixpkgs, disko, flake-utils, nixos-anywhere, quarkdb-nix, ... }:
     let
       overlays = [ quarkdb-nix.overlays.default ];
-    in
-    {
-      nixosConfigurations.quarkdb-0 = nixpkgs.lib.nixosSystem {
+      quarkdbConfig = hostname: {
         system = "x86_64-linux";
         modules = [
           { nixpkgs.overlays = overlays; }
           disko.nixosModules.disko
-          ./configuration.nix
-          { networking.hostName = "quarkdb-0"; }
+          ./nixos/configuration.nix
+
+          { networking.hostName = hostname; }
         ];
+      };
+    in
+    {
+      nixosConfigurations = {
+        quarkdb-0 = nixpkgs.lib.nixosSystem (quarkdbConfig "quarkdb-0");
+        quarkdb-1 = nixpkgs.lib.nixosSystem (quarkdbConfig "quarkdb-1");
+        quarkdb-2 = nixpkgs.lib.nixosSystem (quarkdbConfig "quarkdb-2");
       };
     } // (
       flake-utils.lib.eachDefaultSystem (system:

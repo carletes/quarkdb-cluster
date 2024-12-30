@@ -3,11 +3,12 @@
 set -eux -o pipefail
 
 here=$(cd "$(dirname "$0")" && pwd)
-tf_output="${here}/tf/quarkdb-cluster/tf-output"
+tf_output="${here}/tf-output"
+top_dir=$(cd "${here}/.." && pwd)
 
 for i in $(seq 0 $(("$( $tf_output num_vms)" - 1))); do
   ip=$($tf_output -json ipv4_addresses | jq --raw-output ".[$i]")
   nixos-rebuild switch \
-    --flake "${here}#quarkdb-${i}" \
+    --flake "${top_dir}#quarkdb-${i}" \
     --target-host "root@${ip}"
 done

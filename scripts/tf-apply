@@ -2,7 +2,7 @@
 
 set -eux -o pipefail
 
-here=$(cd "$(dirname "$0")" && pwd)
-(cd "$here" &&
+tf_dir=$(cd "$(dirname "$0")/../tf/quarkdb-cluster" && pwd)
+(cd "$tf_dir" &&
   tofu init &&
   tofu apply "$@")

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -eu -o pipefail
+
+tf_dir=$(cd "$(dirname "$0")/../tf/quarkdb-cluster" && pwd)
+(cd "$tf_dir" &&
+  tofu output "$@")

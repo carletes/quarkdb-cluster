@@ -3,52 +3,62 @@
 
   inputs.nixpkgs.url = "nixpkgs/nixos-unstable";
 
+  inputs.flake-parts.url = "github:hercules-ci/flake-parts";
+
   inputs.disko.url = "github:nix-community/disko";
   inputs.disko.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.disko.inputs.flake-parts.follows = "flake-parts";
 
   inputs.nixos-anywhere.url = "github:nix-community/nixos-anywhere";
   inputs.nixos-anywhere.inputs.disko.follows = "disko";
+  inputs.nixos-anywhere.inputs.flake-parts.follows = "flake-parts";
   inputs.nixos-anywhere.inputs.nixpkgs.follows = "nixpkgs";
-
-  inputs.flake-utils.url = "github:numtide/flake-utils";
 
   inputs.quarkdb-nix.url = "git+https://codeberg.org/carletes/quarkdb-nix?ref=main";
   inputs.quarkdb-nix.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.quarkdb-nix.inputs.flake-utils.follows = "flake-utils";
 
-  outputs = { nixpkgs, disko, flake-utils, nixos-anywhere, quarkdb-nix, ... }:
+  outputs = { nixpkgs, disko, flake-parts, nixos-anywhere, quarkdb-nix, ... }@inputs:
     let
       overlays = [ quarkdb-nix.overlays.default ];
-      quarkdbConfig = hostname: {
-        system = "x86_64-linux";
-        modules = [
-          { nixpkgs.overlays = overlays; }
-          disko.nixosModules.disko
-          ./nixos/configuration.nix
-
-          { networking.hostName = hostname; }
-        ];
-      };
+      nixosVars = builtins.fromJSON (builtins.readFile ./nixos/nix_vars.json);
     in
-    {
-      nixosConfigurations = {
-        quarkdb-0 = nixpkgs.lib.nixosSystem (quarkdbConfig "quarkdb-0");
-        quarkdb-1 = nixpkgs.lib.nixosSystem (quarkdbConfig "quarkdb-1");
-        quarkdb-2 = nixpkgs.lib.nixosSystem (quarkdbConfig "quarkdb-2");
-      };
-    } // (
-      flake-utils.lib.eachDefaultSystem (system:
-        let
-          pkgs = import nixpkgs {
-            inherit system;
-          };
-        in
-        {
+
+    flake-parts.lib.mkFlake { inherit inputs; } (
+      { lib, ... }:
+      {
+        flake = {
+          nixosConfigurations = lib.mapAttrs
+            (
+              hostname: _: nixpkgs.lib.nixosSystem {
+                system = "x86_64-linux";
+                modules = [
+                  { nixpkgs.overlays = overlays; }
+                  disko.nixosModules.disko
+                  ./nixos/configuration.nix
+
+                  {
+                    networking.hostName = hostname;
+                    networking.hosts = lib.mapAttrs' (hostname: v: lib.nameValuePair (v.ipv4_address) [ hostname ]) nixosVars;
+                  }
+                ];
+              }
+            )
+            nixosVars;
+        };
+
+        systems = [
+          "aarch64-darwin"
+          "aarch64-linux"
+          "x86_64-darwin"
+          "x86_64-linux"
+        ];
+
+        perSystem = { pkgs, ... }: {
           devShells.default = pkgs.mkShell {
             buildInputs = with pkgs; [
               cdrtools
               jq
-              (opentofu.withPlugins (p: [ p.libvirt ]))
+              (opentofu.withPlugins (p: [ p.local p.libvirt ]))
               nixos-anywhere.packages.${system}.nixos-anywhere
             ];
 
@@ -56,6 +66,8 @@
               export LIBVIRT_DEFAULT_URI="qemu:///system"
             '';
           };
-        })
+
+        };
+      }
     );
 }

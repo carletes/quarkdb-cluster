@@ -2,7 +2,8 @@
 
 set -eux -o pipefail
 
-tf_dir=$(cd "$(dirname "$0")/../tf/quarkdb-cluster" && pwd)
+top_dir=$(cd "$(dirname "$0")/.." && pwd)
+tf_dir=$(cd "${top_dir}/tf/quarkdb-cluster" && pwd)
 (cd "$tf_dir" &&
   tofu init &&
-  tofu apply "$@")
+  tofu apply -var nixos_vars_file="${top_dir}/nixos/nix_vars.json" "$@")

@@ -27,6 +27,7 @@
           { nixpkgs.overlays = overlays; }
           disko.nixosModules.disko
           ./configuration.nix
+          { networking.hostName = "quarkdb-0"; }
         ];
       };
     } // (

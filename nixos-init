@@ -15,6 +15,5 @@ for i in $(seq 0 $(("$( $tf_output num_vms)" - 1))); do
   nixos-anywhere \
     --flake "${here}#quarkdb-${i}" \
     --env-password \
-    --generate-hardware-config nixos-generate-config "${here}/hardware-configuration.nix" \
     --target-host "${bootstrap_user}@${ip}"
 done

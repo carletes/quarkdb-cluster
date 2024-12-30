@@ -65,6 +65,6 @@ output "bootstrap_password" {
   value = var.bootstrap_password
 }
 
-output "ipv4_addresses" {
-  value = [for vm in libvirt_domain.quarkdb : vm.network_interface.0.addresses.0]
+output "vms" {
+  value = { for vm in libvirt_domain.quarkdb : vm.name => { "ipv4_address" = vm.network_interface.0.addresses.0 } }
 }

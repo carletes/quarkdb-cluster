@@ -11,10 +11,10 @@ output "bootstrap_user" {
   value = module.vm.bootstrap_user
 }
 
-output "ipv4_addresses" {
-  value = module.vm.ipv4_addresses
-}
-
 output "num_vms" {
   value = var.num_vms
+}
+
+output "vms" {
+  value = module.vm.vms
 }

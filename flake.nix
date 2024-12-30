@@ -48,7 +48,7 @@
             buildInputs = with pkgs; [
               cdrtools
               jq
-              (opentofu.withPlugins (p: [ p.null p.external p.libvirt ]))
+              (opentofu.withPlugins (p: [ p.libvirt ]))
               nixos-anywhere.packages.${system}.nixos-anywhere
             ];
 

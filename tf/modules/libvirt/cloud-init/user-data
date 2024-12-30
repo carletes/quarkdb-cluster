@@ -1,0 +1,14 @@
+#cloud-config
+
+# hostname: $ { hostname }
+
+users:
+  - default
+
+password: ${bootstrap_password}
+chpasswd:
+  expire: False
+ssh_pwauth: True
+
+locale: en_US
+timezone: UTC

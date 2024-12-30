@@ -1,0 +1,6 @@
+/.direnv
+/tf/quarkdb-cluster/.terraform.lock.hcl
+/tf/quarkdb-cluster/.terraform/
+/tf/quarkdb-cluster/terraform.tfstate
+/tf/quarkdb-cluster/terraform.tfstate.backup
+

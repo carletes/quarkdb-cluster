@@ -163,16 +163,15 @@
       "locked": {
         "lastModified": 1735486256,
         "narHash": "sha256-cKvy/nD+IsoFONqro2WRfKgG2BkjKZPaiHsRfddzZaQ=",
-        "ref": "main",
+        "owner": "carletes",
+        "repo": "quarkdb-nix",
         "rev": "4ef22c3f384368036a383acef3c307dd3ca563a2",
-        "revCount": 2,
-        "type": "git",
-        "url": "https://codeberg.org/carletes/quarkdb-nix"
+        "type": "github"
       },
       "original": {
-        "ref": "main",
-        "type": "git",
-        "url": "https://codeberg.org/carletes/quarkdb-nix"
+        "owner": "carletes",
+        "repo": "quarkdb-nix",
+        "type": "github"
       }
     },
     "root": {

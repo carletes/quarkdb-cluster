@@ -14,7 +14,7 @@
   inputs.nixos-anywhere.inputs.flake-parts.follows = "flake-parts";
   inputs.nixos-anywhere.inputs.nixpkgs.follows = "nixpkgs";
 
-  inputs.quarkdb-nix.url = "git+https://codeberg.org/carletes/quarkdb-nix?ref=main";
+  inputs.quarkdb-nix.url = "github:carletes/quarkdb-nix";
   inputs.quarkdb-nix.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs = { nixpkgs, disko, flake-parts, nixos-anywhere, quarkdb-nix, ... }@inputs:
